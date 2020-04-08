@@ -28,20 +28,55 @@ public final class RXTXtest {
         String portName = "COM2";
         int portSpeed = 9600;
         serialPort = openSerialPort(portName, portSpeed);
+        // 开线程轮询
+        new Thread(() -> {
+            String str = "a";
+            byte[] bytes = str.getBytes();
+            while (true) {
+                RXTXtest.sendData(serialPort, bytes);//发送数据
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
         // 监听串口
         RXTXtest.setListenerToSerialPort(serialPort, new SerialPortEventListener() {
             @Override
             public void serialEvent(SerialPortEvent serialPortEvent) {
                 if (serialPortEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) { //数据通知
                     byte[] bytes = RXTXtest.readData(serialPort);
-                    // System.out.println("收到的数据长度： " + bytes.length);
-                    // System.out.println("收到的数据：" + new String(bytes));
+                    // 收到的数据长度 bytes.length
+                    // 收到的字符串 new String(bytes)
                     dataBuffer += new String(bytes);
                     dataBuffer = uploadData.checkStringAndUpload(dataBuffer);
                 }
             }
         });
     }
+//    //启动一个线程每2s向串口发送数据，发送1000次hello
+//			new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                String s = t.replace(" ", "");
+//                byte[] bytes = ByteUtils.hexStr2Byte(s);
+//                RXTXtest.sendData(serialPort, bytes);//发送数据
+//                try {
+//                    Thread.sleep(500);
+//                } catch (InterruptedException e) {
+//                    // TODO Auto-generated catch block
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    Thread.sleep(2000);
+//                } catch (InterruptedException e) {
+//                    // TODO Auto-generated catch block
+//                    e.printStackTrace();
+//                }
+//                closeSerialPort(serialPort);
+//            }
+//    }).start();
 
     /**获得系统可用的端口名称列表*/
     public static List<String> getSystemPort(){
@@ -92,6 +127,11 @@ public final class RXTXtest {
     /**向串口发送数据*/
     private static void sendData(SerialPort serialPort, byte[] data) {
         OutputStream os = null;
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
         try {
             os = serialPort.getOutputStream();//获得串口的输出流
             os.write(data);

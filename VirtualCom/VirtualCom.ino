@@ -1,5 +1,3 @@
-#include<SoftwareSerial.h>
-
 #include <SFE_BMP180.h>
 #include <Wire.h>
 SFE_BMP180 pressure;
@@ -57,10 +55,14 @@ unsigned char readByByte() {
   return dat;
 }
 //###################################################################
-// ???
-//###################################################################
+
+byte inByte;
 
 void loop() {
+      
+  if (Serial.available() > 0) {
+    inByte = Serial.read();
+    if (inByte == 'a') {
       //-----------------------------------------------------------------
       // 温湿度
       initDHT11();
@@ -129,5 +131,74 @@ void loop() {
       Serial.print(cm + 1);
       //-----------------------------------------------------------------
       Serial.print("%");
-      delay(5000);
+    }
+  }
+  delay(200);
 }
+////-----------------------------------------------------------------
+//      // 温湿度
+//      initDHT11();
+//      unsigned char a1 = readByByte();
+//      unsigned char a2 = readByByte();
+//      unsigned char a3 = readByByte();
+//      unsigned char a4 = readByByte();
+//      unsigned char a5 = readByByte();
+//      delayMicroseconds(50);//等待50us拉低
+//      pinMode(13, OUTPUT);//设置为输出引脚
+//      digitalWrite(13,HIGH);//释放总线
+//      Serial.print(a1 * 2);
+//      Serial.print("#");
+//      Serial.print(a3 * 2);
+//      Serial.print("#");
+//      //delay(500);
+//      //-----------------------------------------------------------------
+//      // 气压
+//      char status;
+//      double T,P,p0,a;
+//      status = pressure.startTemperature();
+//      if (status != 0)
+//      {
+//        delay(status);
+//        status = pressure.getTemperature(T);
+//        if (status != 0)
+//        {
+//          status = pressure.startPressure(3);
+//          if (status != 0)
+//          {
+//            delay(status);
+//            status = pressure.getPressure(P,T);
+//            if (status != 0)
+//            {
+//              Serial.print(P,0);
+//              Serial.print("#");
+//              //Serial.print(P*0.0295333727,2);
+//              //Serial.println(" inHg");
+//            }
+//            else Serial.println("error retrieving pressure measurement\n");
+//          }
+//          else Serial.println("error starting pressure measurement\n");
+//        }
+//        else Serial.println("error retrieving temperature measurement\n");
+//      }
+//      else Serial.println("error starting temperature measurement\n");
+//      //delay(500);
+//      //-----------------------------------------------------------------
+//      // 光线亮度
+//      int sensorValue = 1023 - analogRead(A0);
+//      Serial.print(sensorValue);
+//      Serial.print("#");
+//      //delay(500);
+//      //-----------------------------------------------------------------
+//      // 超声波测距
+//      digitalWrite(2, LOW);
+//      delayMicroseconds(2);
+//      digitalWrite(2, HIGH);// 拉高
+//      delayMicroseconds(10);// 保持10us
+//      digitalWrite(2, LOW);
+//    
+//      int distance = pulseIn(3,HIGH); // 读取接收脉冲时间?ms
+//      //Serial.println(distance);
+//      int cm = distance / 58;
+//      int inch = distance / 54;
+//      Serial.print(cm + 1);
+//      //-----------------------------------------------------------------
