@@ -21,26 +21,26 @@ public final class RXTXtest {
 
     SerialPort serialPort;
     String dataBuffer = "";
-    InputStream is;
+    UploadData uploadData = new UploadData();
 
-    public void process() throws InterruptedException, IOException {
+    public void process() {
         System.out.println("可用端口: " + getSystemPort());
         String portName = "COM2";
         int portSpeed = 9600;
         serialPort = openSerialPort(portName, portSpeed);
-        is = serialPort.getInputStream();
         // 监听串口
         RXTXtest.setListenerToSerialPort(serialPort, new SerialPortEventListener() {
             @Override
             public void serialEvent(SerialPortEvent serialPortEvent) {
                 if (serialPortEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) { //数据通知
-                    byte[] bytes = RXTXtest.readData(serialPort, is);
-                    System.out.println("收到的数据长度： " + bytes.length);
-                    System.out.println("收到的数据：" + new String(bytes));
+                    byte[] bytes = RXTXtest.readData(serialPort);
+                    // System.out.println("收到的数据长度： " + bytes.length);
+                    // System.out.println("收到的数据：" + new String(bytes));
+                    dataBuffer += new String(bytes);
+                    dataBuffer = uploadData.checkStringAndUpload(dataBuffer);
                 }
             }
         });
-        // closeSerialPort(serialPort);
     }
 
     /**获得系统可用的端口名称列表*/
@@ -111,24 +111,31 @@ public final class RXTXtest {
     }
 
     /**从串口读取数据*/
-    private static byte[] readData(SerialPort serialPort, InputStream is) {
-        byte[] bytes = null;
+    private static byte[] readData(SerialPort serialPort) {
+        InputStream in = null;
+        byte[] bytes = {};
         try {
-            int bufflenth = is.available();//获得数据长度
+            Thread.sleep(50);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+        try {
+            in = serialPort.getInputStream();
+            int bufflenth = in.available(); // 获取buffer里的数据长度
             while (bufflenth != 0) {
-                bytes = new byte[bufflenth];//初始化byte数组
-                is.read(bytes);
-                bufflenth = is.available();
+                bytes = new byte[bufflenth]; // 初始化byte数组为buffer中数据的长度
+                in.read(bytes);
+                bufflenth = in.available();
             }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {
-                if (is != null) {
-                    is.close();
-                    is = null;
+                if (in != null) {
+                    in.close();
+                    in = null;
                 }
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

@@ -76,7 +76,7 @@ void loop() {
       Serial.print("#");
       Serial.print(a3 * 2);
       Serial.print("#");
-      delay(500);
+      //delay(500);
       //-----------------------------------------------------------------
       // 气压
       char status;
@@ -107,13 +107,13 @@ void loop() {
         else Serial.println("error retrieving temperature measurement\n");
       }
       else Serial.println("error starting temperature measurement\n");
-      delay(500);
+      //delay(500);
       //-----------------------------------------------------------------
       // 光线亮度
       int sensorValue = 1023 - analogRead(A0);
       Serial.print(sensorValue);
       Serial.print("#");
-      delay(500);
+      //delay(500);
       //-----------------------------------------------------------------
       // 超声波测距
       digitalWrite(2, LOW);
