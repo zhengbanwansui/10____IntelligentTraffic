@@ -8,6 +8,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.TooManyListenersException;
 
+import entity.User;
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
@@ -16,6 +17,7 @@ import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import gnu.io.UnsupportedCommOperationException;
+import http.HttpRequest;
 
 public final class RXTXtest {
 
@@ -50,7 +52,11 @@ public final class RXTXtest {
                     // 收到的数据长度 bytes.length
                     // 收到的字符串 new String(bytes)
                     dataBuffer += new String(bytes);
-                    dataBuffer = uploadData.checkStringAndUpload(dataBuffer);
+                    try {
+                        dataBuffer = uploadData.checkStringAndUpload(dataBuffer);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });

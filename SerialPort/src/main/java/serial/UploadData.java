@@ -1,4 +1,10 @@
 package serial;
+
+import entity.User;
+import http.HttpRequest;
+
+import java.io.IOException;
+
 /**
  * 字符串格式: 温度#湿度#气压#光照#距离% 80#26#1013#340#44
  * 如果没有%则不取字符串
@@ -12,7 +18,7 @@ public class UploadData {
     int light;
     int distance;
 
-    String checkStringAndUpload(String str) {
+    String checkStringAndUpload(String str) throws IOException {
         if (str.contains("%")) {
             StringBuilder info = new StringBuilder("");
             StringBuilder temp = new StringBuilder("");
@@ -34,7 +40,8 @@ public class UploadData {
             pressure = Integer.parseInt(strs[2]);
             light = Integer.parseInt(strs[3]);
             distance = Integer.parseInt(strs[4]);
-            System.out.println(this.toString());
+            User user = new User("sam","123456", 20);
+            HttpRequest.postRequest("http://localhost:8080/users", user);
         }
         return str;
     }
