@@ -1,11 +1,9 @@
-import window.Win;
+import utils.FilePath;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.IOException;
 
 public class test {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        new Win();
     }
 }

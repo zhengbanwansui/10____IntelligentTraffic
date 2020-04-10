@@ -18,6 +18,7 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import gnu.io.UnsupportedCommOperationException;
 import http.HttpRequest;
+import window.Win;
 
 public final class RXTXtest {
 
@@ -25,7 +26,7 @@ public final class RXTXtest {
     String dataBuffer = "";
     UploadData uploadData = new UploadData();
 
-    public void process(String serialPortName, int baudRate, int DATABITS, int PARITY, int STOPBITS) {
+    public void process(Win win, String serialPortName, int baudRate, int DATABITS, int PARITY, int STOPBITS) {
 
         //String portName = "COM2";
         //int portSpeed = 9600;
@@ -36,11 +37,15 @@ public final class RXTXtest {
             public void serialEvent(SerialPortEvent serialPortEvent) {
                 if (serialPortEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) { //数据通知
                     byte[] bytes = RXTXtest.readData(serialPort);
+
                     // 收到的数据长度 bytes.length
                     // 收到的字符串 new String(bytes)
+                    win.appendJTextArea(new String(bytes));
                     dataBuffer += new String(bytes);
                     try {
                         dataBuffer = uploadData.checkStringAndUpload(dataBuffer);
+                        win.setJTextFields(uploadData.temperature, uploadData.humidness,uploadData.pressure,
+                                uploadData.light, uploadData.distance);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -48,6 +53,7 @@ public final class RXTXtest {
             }
         });
     }
+
     // 开线程轮询
     public void loopQuery() {
 

@@ -40,8 +40,9 @@ public class UploadData {
             pressure = Integer.parseInt(strs[2]);
             light = Integer.parseInt(strs[3]);
             distance = Integer.parseInt(strs[4]);
-            User user = new User("sam","123456", 20);
-            HttpRequest.postRequest("http://localhost:8080/users", user);
+            // 需要修改的http请求位置
+            //User user = new User("sam","123456", 20);
+            //HttpRequest.postRequest("http://localhost:8080/users", user);
         }
         return str;
     }
