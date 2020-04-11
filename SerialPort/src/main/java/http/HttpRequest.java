@@ -1,7 +1,7 @@
 package http;
 
 import com.alibaba.fastjson.JSON;
-import entity.User;
+import entity.SensorData;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -15,12 +15,12 @@ import java.io.IOException;
 
 public class HttpRequest {
 
-    public static void postRequest(String url, User user) throws IOException {
-        System.out.println("请求URL: " + url + " object转JSON字符串: " + JSON.toJSONString(user));
+    public static void postRequest(String url, SensorData sensorData) throws IOException {
+        System.out.println("请求URL: " + url + " object转JSON字符串: " + JSON.toJSONString(sensorData));
 
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost httpPost = new HttpPost(url);
-        String jsonStr = JSON.toJSONString(user);
+        String jsonStr = JSON.toJSONString(sensorData);
         StringEntity entity = new StringEntity(jsonStr, "UTF-8");
         httpPost.setEntity(entity);
         httpPost.setHeader("Content-Type", "application/json;charset=utf8");

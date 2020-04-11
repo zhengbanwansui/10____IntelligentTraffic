@@ -1,5 +1,6 @@
 package serial;
 
+import entity.SensorData;
 import entity.User;
 import http.HttpRequest;
 
@@ -41,8 +42,8 @@ public class UploadData {
             light = Integer.parseInt(strs[3]);
             distance = Integer.parseInt(strs[4]);
             // 需要修改的http请求位置
-            //User user = new User("sam","123456", 20);
-            //HttpRequest.postRequest("http://localhost:8080/users", user);
+            SensorData data = new SensorData(1,temperature,humidness,pressure,light,distance);
+            HttpRequest.postRequest("http://localhost:8080/data", data);
         }
         return str;
     }

@@ -63,7 +63,7 @@ public final class RXTXtest {
             while (true) {
                 RXTXtest.sendData(serialPort, bytes);//发送数据
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
