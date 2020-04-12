@@ -1,5 +1,6 @@
 package window;
 
+import entity.SensorData;
 import gnu.io.SerialPort;
 import serial.RXTXtest;
 
@@ -13,7 +14,7 @@ import static serial.RXTXtest.getSystemPort;
 
 public class Win extends JFrame implements ActionListener {
 
-    private RXTXtest rxtx = new RXTXtest();
+    private RXTXtest rxtx;
 
     public JComboBox<String> jComboBox1 = new JComboBox<>();
     public JComboBox<String> jComboBox2 = new JComboBox<>();
@@ -31,6 +32,7 @@ public class Win extends JFrame implements ActionListener {
     private JTextField clock = new JTextField();
 
     public Win() {
+        rxtx = new RXTXtest();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(200,200,900,500);
         BGJPanel rootPanel = new BGJPanel("back.png");
@@ -43,10 +45,13 @@ public class Win extends JFrame implements ActionListener {
         jComboBox2.addItem("9600");
         jComboBox2.addItem("19200");
         jComboBox2.addItem("38400");
-        jComboBox3.addItem("5");
-        jComboBox3.addItem("6");
-        jComboBox3.addItem("7");
         jComboBox3.addItem("8");
+        jComboBox3.addItem("7");
+        jComboBox3.addItem("6");
+        jComboBox3.addItem("5");
+
+
+
         jComboBox4.addItem("None");
         jComboBox4.addItem("Odd");
         jComboBox4.addItem("Even");
@@ -105,6 +110,7 @@ public class Win extends JFrame implements ActionListener {
             }
         }).start();
 
+
     }
 
     @Override
@@ -154,9 +160,10 @@ public class Win extends JFrame implements ActionListener {
                     break;
                 default:
             }
-            rxtx.process(this, jComboBox1.getSelectedItem().toString()
+            rxtx.open(this, jComboBox1.getSelectedItem().toString()
                     , Integer.parseInt(jComboBox2.getSelectedItem().toString())
                     , DATABITS, PARITY, STOPBITS);
+            rxtx.listen();
         }
         if (e.getSource() == startCollect) {
             startCollect.setEnabled(false);
@@ -172,8 +179,23 @@ public class Win extends JFrame implements ActionListener {
         jTextField5.setText(Integer.toString(e));
     }
 
+    public void setJTextFields(SensorData sensorData) {
+        jTextField1.setText(Integer.toString(sensorData.getTemperature()));
+        jTextField2.setText(Integer.toString(sensorData.getHumidness()));
+        jTextField3.setText(Integer.toString(sensorData.getPressure()));
+        jTextField4.setText(Integer.toString(sensorData.getLight()));
+        jTextField5.setText(Integer.toString(sensorData.getDistance()));
+    }
+
     public void appendJTextArea(String str) {
         jTextArea.append(str);
     }
 
+    public void setJTextArea(String str) {
+        jTextArea.setText(str);
+    }
+
+    public RXTXtest getRxtx() {
+        return rxtx;
+    }
 }

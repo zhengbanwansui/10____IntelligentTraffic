@@ -1,7 +1,6 @@
 package serial;
 
 import entity.SensorData;
-import entity.User;
 import http.HttpRequest;
 
 import java.io.IOException;
@@ -13,11 +12,7 @@ import java.io.IOException;
  */
 public class UploadData {
 
-    int temperature;
-    int humidness;
-    int pressure;
-    int light;
-    int distance;
+    private SensorData data = new SensorData(0,0,0,0,0,0);
 
     String checkStringAndUpload(String str) throws IOException {
         if (str.contains("%")) {
@@ -36,26 +31,23 @@ public class UploadData {
             str = temp.toString();
             System.out.println("获取传感器: " + info);
             String[] strs = info.toString().split("#");
-            temperature = Integer.parseInt(strs[0]);
-            humidness = Integer.parseInt(strs[1]);
-            pressure = Integer.parseInt(strs[2]);
-            light = Integer.parseInt(strs[3]);
-            distance = Integer.parseInt(strs[4]);
-            // 需要修改的http请求位置
-            SensorData data = new SensorData(1,temperature,humidness,pressure,light,distance);
+            int temperature = Integer.parseInt(strs[0]);
+            int humidness = Integer.parseInt(strs[1]);
+            int pressure = Integer.parseInt(strs[2]);
+            int light = Integer.parseInt(strs[3]);
+            int distance = Integer.parseInt(strs[4]);
+            // 发送HttpPost请求
+            data.setTemperature(temperature);
+            data.setHumidness(humidness);
+            data.setPressure(pressure);
+            data.setLight(light);
+            data.setDistance(distance);
             HttpRequest.postRequest("http://localhost:8080/data", data);
         }
         return str;
     }
 
-    @Override
-    public String toString() {
-        return "UploadData{" +
-                "temperature=" + temperature +
-                ", humidness=" + humidness +
-                ", pressure=" + pressure +
-                ", light=" + light +
-                ", distance=" + distance +
-                '}';
+    public SensorData getData() {
+        return data;
     }
 }

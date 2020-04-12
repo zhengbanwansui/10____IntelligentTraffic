@@ -72,4 +72,15 @@ public class SensorData implements Serializable {
     public void setDistance(Integer distance) {
         this.distance = distance;
     }
+
+    @Override
+    public String toString() {
+        return "SensorData{" +
+                "temperature=" + temperature +
+                ", humidness=" + humidness +
+                ", pressure=" + pressure +
+                ", light=" + light +
+                ", distance=" + distance +
+                '}';
+    }
 }

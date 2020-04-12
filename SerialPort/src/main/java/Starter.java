@@ -1,16 +1,26 @@
-import entity.User;
-import http.HttpRequest;
-import serial.RXTXtest;
-import utils.FilePath;
+import controller.DataController;
+import entity.SensorData;
 import window.Win;
-
-import java.io.IOException;
 
 public class Starter {
 
-    public static void main(String[] args) throws InterruptedException, IOException {
+    public static void main(String[] args) {
 
-        new Win();
+        Win win = new Win();
+        DataController dataController = new DataController();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    dataController.updateData(win);
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
 
     }
 

@@ -8,6 +8,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.TooManyListenersException;
 
+import entity.SensorData;
 import entity.User;
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
@@ -22,37 +23,35 @@ import window.Win;
 
 public final class RXTXtest {
 
-    SerialPort serialPort;
-    String dataBuffer = "";
-    UploadData uploadData = new UploadData();
+    private SerialPort serialPort;
+    private String dataBuffer = "";
+    private String dataBufferLog = "";
+    private UploadData uploadData = new UploadData();
 
-    public void process(Win win, String serialPortName, int baudRate, int DATABITS, int PARITY, int STOPBITS) {
-
-        //String portName = "COM2";
-        //int portSpeed = 9600;
+    public void open(Win win, String serialPortName, int baudRate, int DATABITS, int PARITY, int STOPBITS) {
+        // 开启串口
         serialPort = openSerialPort(serialPortName, baudRate, DATABITS,PARITY, STOPBITS);
-        // 监听串口
-        RXTXtest.setListenerToSerialPort(serialPort, new SerialPortEventListener() {
-            @Override
-            public void serialEvent(SerialPortEvent serialPortEvent) {
-                if (serialPortEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) { //数据通知
-                    byte[] bytes = RXTXtest.readData(serialPort);
+    }
 
-                    // 收到的数据长度 bytes.length
-                    // 收到的字符串 new String(bytes)
-                    win.appendJTextArea(new String(bytes));
+    public void listen() {
+
+        new Thread(() -> {
+            // 监听串口
+            RXTXtest.setListenerToSerialPort(serialPort, serialPortEvent -> {
+                if (serialPortEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
+                    byte[] bytes = RXTXtest.readData(serialPort);
                     dataBuffer += new String(bytes);
+                    dataBufferLog += new String(bytes);
                     try {
                         dataBuffer = uploadData.checkStringAndUpload(dataBuffer);
-                        win.setJTextFields(uploadData.temperature, uploadData.humidness,uploadData.pressure,
-                                uploadData.light, uploadData.distance);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-            }
-        });
+            });
+        }).start();
     }
+
 
     // 开线程轮询
     public void loopQuery() {
@@ -188,31 +187,11 @@ public final class RXTXtest {
         serialPort.notifyOnBreakInterrupt(true);//中断事件监听
     }
 
+    public String getDataBufferLog() {
+        return dataBufferLog;
+    }
+
+    public UploadData getUploadData() {
+        return uploadData;
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-//
-//
-//// 监听串口
-//        RXTXtest.setListenerToSerialPort(serialPort, new SerialPortEventListener() {
-//@Override
-//public void serialEvent(SerialPortEvent serialPortEvent) {
-//        if (serialPortEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) { //数据通知
-//        byte[] bytes = RXTXtest.readData(serialPort);
-//        System.out.println("收到的数据长度： " + bytes.length);
-//        System.out.println("收到的数据：" + new String(bytes));
-//        }
-//        }
-//        });
